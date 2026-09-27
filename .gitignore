@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Android build outputs & bytecode
+bin/
+gen/
+build/
+*.dex
+*.apk
+*.ap_
+*.aab
+
+# Audio files (except sample assets)
+*.flac
+*.wav
+*.mp3
+!generator/samples/*.wav
+!generator/samples/*.mp3
+!android_player/assets/audio.mp3
+
+# Keystores
+*.jks
+*.keystore
+!debug.keystore
+
+# Editor & OS files
+.DS_Store
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
