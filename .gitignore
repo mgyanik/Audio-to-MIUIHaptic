@@ -34,3 +34,7 @@ build/
 .vscode/
 *.swp
 *~
+
+# Release artifacts
+*.tar.gz
+RELEASE_NOTES.md
