@@ -1,10 +1,10 @@
-# audio2haptic
+# Audio-to-MIUIHaptic
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Android](https://img.shields.io/badge/Android-API%2026+-3DDC84.svg?logo=android&logoColor=white)](https://developer.android.com/)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Android%20%7C%20Termux-lightgrey.svg)](https://termux.dev/)
-[![Haptics](https://img.shields.io/badge/Haptics-MIUI%20%7C%20RichTap%20%7C%20AOSP-orange.svg)](https://github.com/mgyanik/audio2haptic)
+[![Haptics](https://img.shields.io/badge/Haptics-MIUI%20%7C%20RichTap%20%7C%20AOSP-orange.svg)](https://github.com/mgyanik/Audio-to-MIUIHaptic)
 
 [ [English](README.md) | 简体中文 ]
 
@@ -182,6 +182,25 @@ pm install -r bin/FHSPlayer.apk
    ```
 3. 将 `waveform.json` 和 `audio.mp3` 覆盖到 `android_player/assets/` 目录下。
 4. 重新执行 `bash build_apk.sh` 即可生成属于这首歌曲的专属触感 APK。
+
+---
+
+## 设备架构兼容性说明 (ARMv7 vs ARMv8)
+
+针对 Android 播放器与 Python 转换端运行环境的架构说明：
+
+| 组件 | 目标 CPU 架构 | 运行载体 | 兼容性说明 |
+| :--- | :--- | :--- | :--- |
+| **Android 播放器 (`FHSPlayer.apk`)** | **通用架构 (`noarch`)** | Java 字节码 (`classes.dex`) | **兼容所有 CPU 架构**（包含 `arm64-v8a`、`armeabi-v7a`、`x86`、`x86_64`），仅需 Android 8.0+ (API 26+)。由系统 ART/Dalvik 虚拟机直接解析，无特定架构原生动态库依赖。 |
+| **Python 转换端 CLI** | **ARMv8-A (`arm64-v8a` / 64位)** | 64位 Python / NumPy / FFmpeg | **推荐标准**。适用于全部主流现代安卓旗舰与中端芯片（骁龙 8/7 系列、天玑、麒麟）。具备 64 位 NEON SIMD 矢量加速，可提供最佳的频域 FFT 浮点卷积计算效率。 |
+| **Python 转换端 CLI** | **ARMv7-A (`armeabi-v7a` / 32位)** | 32位 Python / NumPy / FFmpeg | 兼容老旧 32 位设备及入门级芯片。可正常运行，但受限于 32 位用户态寻址空间，在大音频文件进行 FFT 卷积时耗时与内存开销略高。 |
+
+### 如何在 Termux 中查看本机架构：
+```bash
+uname -m
+# 返回 aarch64 -> ARMv8 64位架构
+# 返回 armv7l / armv8l (32位用户空间) -> ARMv7 32位架构
+```
 
 ---
 

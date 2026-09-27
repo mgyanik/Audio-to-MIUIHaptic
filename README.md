@@ -1,10 +1,10 @@
-# audio2haptic
+# Audio-to-MIUIHaptic
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Android](https://img.shields.io/badge/Android-API%2026+-3DDC84.svg?logo=android&logoColor=white)](https://developer.android.com/)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Android%20%7C%20Termux-lightgrey.svg)](https://termux.dev/)
-[![Haptics](https://img.shields.io/badge/Haptics-MIUI%20%7C%20RichTap%20%7C%20AOSP-orange.svg)](https://github.com/mgyanik/audio2haptic)
+[![Haptics](https://img.shields.io/badge/Haptics-MIUI%20%7C%20RichTap%20%7C%20AOSP-orange.svg)](https://github.com/mgyanik/Audio-to-MIUIHaptic)
 
 [ English | [简体中文](README_zh.md) ]
 
@@ -182,6 +182,25 @@ pm install -r bin/FHSPlayer.apk
    ```
 3. Copy `waveform.json` and `audio.mp3` into `android_player/assets/`.
 4. Re-run `bash build_apk.sh` to package a custom APK tailored to your song.
+
+---
+
+## Device Architecture Compatibility (ARMv7 vs ARMv8)
+
+Understanding target architecture requirements for the player application and DSP generator:
+
+| Component | Target Architecture | Binary / Runtime Model | Compatibility Notes |
+| :--- | :--- | :--- | :--- |
+| **Android Player (`FHSPlayer.apk`)** | **Universal (`noarch`)** | Java Bytecode (`classes.dex`) | Compatible with **all CPU architectures** (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`) on Android 8.0+ (API 26+). Runs directly on ART/Dalvik VM without native binary dependencies. |
+| **Python Generator CLI** | **ARMv8-A (arm64-v8a / 64-bit)** | 64-bit Python / NumPy / FFmpeg | **Recommended**. Standard for modern Android flagships and mid-range devices (Snapdragon 8/7 series, Dimensity, Kirin). Provides 64-bit SIMD NEON acceleration and maximum FFT float throughput. |
+| **Python Generator CLI** | **ARMv7-A (armeabi-v7a / 32-bit)** | 32-bit Python / NumPy / FFmpeg | Supported on legacy 32-bit devices and older budget chipsets. Functional, but restricted to 32-bit user-space address space and slightly higher CPU overhead during large audio FFT convolutions. |
+
+### How to verify your device architecture in Termux:
+```bash
+uname -m
+# aarch64 -> ARMv8 (64-bit)
+# armv7l / armv8l (in 32-bit userspace) -> ARMv7 (32-bit)
+```
 
 ---
 
